@@ -1,6 +1,7 @@
 var http = require('http')
 var fs = require('fs')
 var url = require('url')
+const { SSL_OP_COOKIE_EXCHANGE } = require('constants')
 var port = process.argv[2]
 
 if(!port){
@@ -42,12 +43,24 @@ var server = http.createServer(function(request, response){
         response.end(`{"errorCode": 401}`)
       }else{
         response.statusCode = 200
+        // 这里设置 cookie 名字是 logged=1 浏览器会替用户保存着。
+        response.setHeader('Set-Cookie', 'logged=1')
         response.end()
       }
     })
   }else if (path === "/home.html") {
-    // 写出来 不知道当前用户是谁
-    response.end('hi') // 这里必须有 end 没有跳转过去会一直请求等结果
+    const cookie = request.headers['cookie']
+    if(cookie === "logged=1"){
+      const homeHtml = fs.readFileSync('./public/home.html').toString()
+      const string = homeHtml.replace('{{user.name}}','已登录')
+      response.write(string)
+      response.end()
+    }else{
+      const homeHtml = fs.readFileSync('./public/home.html').toString()
+      const string = homeHtml.replace('{{user.name}}','未登录')
+      response.write(string)
+      response.end() 
+    }
 }else if (path === "/login" && method === "POST") {
     response.setHeader('content-Type', 'text/html; charset=utf-8')
     // 需要先读取数据库 下边查找下标最大的会用到

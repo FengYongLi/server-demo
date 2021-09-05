@@ -25,3 +25,5 @@
  序列化：`JSON.parse()`
  * **实现登录页面：**
  注册成功跳转登录页面，登录跳转 `home` 页面显示用户名，无法确定当前用户，受阻。
+ * **标记用户登录状态：**
+设置`Cookie`: `response.setHeader('Set-Cookie', 'loginess=1, HttpOnly')`,其中 `HttpOnly` 可以做到前端读取不到 `Cookie`，利用 `Cookie` 标记用户登录状态,
