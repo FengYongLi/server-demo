@@ -9,7 +9,7 @@
 # 动态服务器
 * **动态服务器开始：读取数据库**
 `response.setHeader('content-Type','text/html; charset=utf-8')`
- node 1.js
+ 运行：`node 1.js`
 * **数据库写入数据**
  `user => users.json`
 * **实现用户注册**
@@ -21,3 +21,5 @@
  `if(path === "/login" && method === "POST")`
 * **用户注册，后台拿到数据**
 监听请求事件：`request.on()` 知识点：`Buffer.concat(array).toString()`
+* **用户注册数据写入数据库**
+ 序列化：`JSON.parse()`
