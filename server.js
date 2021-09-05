@@ -22,19 +22,21 @@ var server = http.createServer(function(request, response){
   console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
 
 
-  response.statusCode = 200
-    response.setHeader('Content-Type', 'text/html;charset=utf-8')
-    let x = path
-    let content 
-    
-    try{
-      content = fs.readFileSync(`./public${path}`)
-    }catch(error){
-      content = "文件不存在"
-      response.statusCode = 404
-    }
-    response.write(content)
-    response.end()
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'text/html;charset=utf-8');
+  // 默认首页 如果 path 为 / 就默认 index.html
+  // 如果不是根目录就根据 path 加载
+  const filePath = path === '/' ? '/index.html' : path
+  let content;
+
+  try {
+    content = fs.readFileSync(`./public${filePath}`);
+  } catch (error) {
+    content = '文件不存在';
+    response.statusCode = 404;
+  }
+  response.write(content);
+  response.end();
 
 
   /******** 代码结束，下面不要看 ************/
