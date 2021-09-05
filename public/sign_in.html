@@ -1,36 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
 <body>
-    <form id="loginForm">
+    <form id="signInForm">
         <div>
             <label>用户名<input type="text" name="name"></label>
         </div>
         <div>
             <label>密码<input type="password" name="password"></label>
         </div>
-        <button type="submit">注册</button>
+        <button type="submit">登录</button>
     </form>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script>
-        // 声明变量 $form 是 form 
-        const $form = $('#loginForm')
-        // 监听 submit 提交事件
-        $form.on('submit',(e)=>{
-            // 阻止默认动作
+        const $form = $('#signInForm')
+        $form.on('submit', (e) => {
             e.preventDefault()
-            // 拿到 name=name 的 input 的值 也就是用户名 val=== value
             const name = $form.find('input[name=name]').val()
-            // 拿到密码
             const password = $form.find('input[name=password]').val()
-            console.log(name,password)
+            console.log(name, password)
             $.ajax({
                 method: 'POST',
-                url: '/login',
+                url: '/sign_in',
                 contentType: 'text/json; charset=UTF-8',
                 data: JSON.stringify({ name, password })
             }).then(() => {
-                alert("注册成功")
-                location.href = '/sign_in.html'
-            }, () => { })
+                alert("登录成功")
+                location.href = '/home.html'
+            }, () => {'xxx' })
         })
 
     </script>
 </body>
+</html>
