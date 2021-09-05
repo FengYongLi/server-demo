@@ -22,7 +22,18 @@ var server = http.createServer(function(request, response){
   console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
   if(path === "/login" && method === "POST"){
     response.setHeader('content-Type','text/html; charset=utf-8')
+    const array = []
+    request.on('data',(chunk)=>{
+      array.push(chunk)
+    })
+    request.on('end',()=>{
+      const string =  Buffer.concat(array).toString()
+      console.log(string)
+      const obj = JSON.parse(string)
+      console.log(obj.name)
+      console.log(obj.password)
       response.end('BUG 解决了')
+    })
     }else{
   response.statusCode = 200;
   const filePath = path === '/' ? '/index.html' : path
