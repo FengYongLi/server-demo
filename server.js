@@ -21,6 +21,8 @@
     /******** 从这里开始看，上面不要看 ************/
 
     console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
+    // 有两处都需要读到 session 这里把它放最上边
+    const session = JSON.parse(fs.readFileSync('./session.json').toString())
     if(path === "/sign_in" && method === "POST"){
       // 需要先读取数据库 要看下你的用户名和密码在不在数据库
       const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
@@ -40,35 +42,39 @@
         if(user === undefined){
           response.statusCode = 400
           response.setHeader('content-Type', 'text/json; charset=utf-8')
-          response.end(`{"errorCode": 401}`)
+          //response.end(`{"errorCode": 401}`)
         }else{
           response.statusCode = 200
-          // 这里设置 cookie 名字是 logged=1 布尔值 浏览器会替用户保存着。
-          // 不用布尔值 用当前用户的 id 作为标记 这样 HOME 后台就能获取到当前用户 id
-          response.setHeader('Set-Cookie', `user_id=${user.id}; HttpOnly`)
-          response.end()
+          const random = Math.random()
+          //下边这句代码 === ["564161561651":{"user_id":user.id}]
+          session[random] = {user_id: user.id}
+          // 把 session(此时是一个对象) 转为字符串 存入session.json
+          fs.writeFileSync('./session.json', JSON.stringify(session))
+          console.log(session)
+          // 发送响应时把随机数给浏览器
+          response.setHeader('Set-Cookie', `session_id=${random}; HttpOnly`)
         }
+        response.end()
       })
     }else if (path === "/home.html") {
       const cookie = request.headers['cookie']
-      
-      let userId
+      let sessionId
       try{
-      userId = cookie.split(';')
-        .filter(s=>s.indexOf('user_id=')>=0)[0].split('=')[1]
+      sessionId = cookie
+        .split(';')
+        .filter(s=>s.indexOf('session_id=')>=0)[0]
+        .split('=')[1]
       }catch(error){}
 
-      if(userId){
+      if(sessionId && session[sessionId]){
+        const userId = session[sessionId].user_id
         const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
-        const user = userArray.find(user=>user.id.toString() === userId)
+        const user = userArray.find(user=>user.id === userId)
         const homeHtml = fs.readFileSync('./public/home.html').toString()
-        let string
+        let string = ''
         if(user){
           string = homeHtml.replace('{{loginStatus}}','已登录')
             .replace('{{user.name}}', user.name)
-        }else{
-          string = homeHtml.replace('{{loginStatus}}','未登录')
-          .replace('{{user.name}}', '')
         }
         response.write(string)
         response.end()
