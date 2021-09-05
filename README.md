@@ -9,3 +9,5 @@ node-dev server.js 8888
  node 1.js
 # 6. 数据库写入数据
  user => users.json
+# 7. 实现用户注册
+ 引入jQuery 获取 name 和 password
