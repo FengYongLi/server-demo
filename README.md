@@ -11,3 +11,7 @@ node-dev server.js 8888
  user => users.json
 # 7. 实现用户注册
  引入jQuery 获取 name 和 password
+# 8. 发送 POST 请求
+ 把数据放到请求第四部分发送请求
+# 9. 添加注册路由
+ 路径为 /login 走动态服务器
