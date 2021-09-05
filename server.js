@@ -22,11 +22,18 @@ var server = http.createServer(function(request, response){
   console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
 
 
-    response.statusCode = 200
+  response.statusCode = 200
     response.setHeader('Content-Type', 'text/html;charset=utf-8')
-    // path 上边有定义
     let x = path
-    response.write(fs.readFileSync(`./public${x}`))
+    let content 
+    
+    try{
+      content = fs.readFileSync(`./public${path}`)
+    }catch(error){
+      content = "文件不存在"
+      response.statusCode = 404
+    }
+    response.write(content)
     response.end()
 
 
